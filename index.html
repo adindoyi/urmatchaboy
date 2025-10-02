@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🍵 MatchaBoy - Order & Revenue Tracker</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+    :root {
+      --bg: #f9fafb;
+      --card: #ffffff;
+      --border: #e5e7eb;
+      --green: #16a34a;
+      --green-dark: #15803d;
+      --text-dark: #111827;
+      --text-light: #6b7280;
+      --shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      margin: 0;
+      padding: 1.5rem;
+      color: var(--text-dark);
+    }
+    h1 {
+      text-align: center;
+      color: var(--green-dark);
+      margin-bottom: 2rem;
+    }
+    .container {
+      display: grid;
+      gap: 1.5rem;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+    }
+    .menu-grid {
+      display: grid;
+      gap: 1rem;
+    }
+    .menu-card {
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 1rem 1.2rem;
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+    .menu-card h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    .menu-card .price {
+      color: var(--green);
+      font-weight: 600;
+      margin-top: 0.3rem;
+    }
+    .menu-card .revenue {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      margin: 0.2rem 0 0.8rem;
+    }
+    .qty-control {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.7rem;
+      margin-top: 0.3rem;
+    }
+    .qty-control span {
+      font-size: 0.9rem;
+      color: var(--text-dark);
+      width: 55px;
+      text-align: right;
+    }
+    .qty-control button {
+      width: 40px;
+      height: 36px;
+      border: none;
+      border-radius: 0.6rem;
+      background: #f3f4f6;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .qty-control button:hover {
+      background: #e5e7eb;
+    }
+    .qty-control input {
+      width: 55px;
+      text-align: center;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 0.3rem;
+      border-radius: 0.5rem;
+      border: 1px solid var(--border);
+    }
+    .btn {
+      margin-top: 1rem;
+      width: 100%;
+      padding: 0.7rem;
+      background: var(--green);
+      color: white;
+      border: none;
+      border-radius: 0.6rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    .btn:hover { background: var(--green-dark); }
+    textarea {
+      width: 100%;
+      min-height: 220px;
+      padding: 1rem;
+      border-radius: 0.6rem;
+      border: 1px solid var(--border);
+      background: #f3f4f6;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+    .income-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+    .input-group {
+      display: flex;
+      flex-direction: column;
+    }
+    .input-group label {
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 4px;
+    }
+    .input-group input {
+      padding: 0.6rem 0.8rem;
+      border-radius: 0.6rem;
+      border: 1px solid var(--border);
+      font-size: 0.9rem;
+      transition: 0.2s;
+    }
+    .input-group input:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 2px rgba(22,163,74,0.2);
+      outline: none;
+    }
+    @media (min-width: 768px) {
+      .container { grid-template-columns: 2fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🍵 MatchaBoy - Order & Revenue Tracker</h1>
+  <div class="container">
+    <div>
+      <div id="menu" class="card">
+        <h2>Pilih Menu</h2>
+        <div id="menuGrid" class="menu-grid"></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <h2>Ringkasan</h2>
+        <p>Total Cup: <span id="totalCups">0</span></p>
+        <p>Pendapatan Menu: <span id="menuRevenue">Rp 0</span></p>
+      </div>
+
+      <section class="card">
+        <h3>💰 Input Pendapatan & Pengeluaran</h3>
+        <div class="income-grid">
+          <div class="input-group">
+            <label for="cash">Cash (Rp)</label>
+            <input id="cash" type="number" value="0">
+          </div>
+          <div class="input-group">
+            <label for="qris">QRIS (Rp)</label>
+            <input id="qris" type="number" value="0">
+          </div>
+          <div class="input-group">
+            <label for="gofood">GoFood (Rp)</label>
+            <input id="gofood" type="number" value="0">
+          </div>
+          <div class="input-group">
+            <label for="expense">Pengeluaran (Rp)</label>
+            <input id="expense" type="number" value="0">
+          </div>
+          <div class="input-group">
+            <label for="plus">Uang Plus (Rp)</label>
+            <input id="plus" type="number" value="0">
+          </div>
+        </div>
+        <button class="btn" onclick="generateReport()">🧾 Cetak Laporan Harian</button>
+      </section>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:1.5rem;">
+    <h2>Laporan Harian</h2>
+    <textarea id="dailyReport" readonly>Belum ada laporan...</textarea>
+    <button class="btn" onclick="copyReport()">📋 Copy Laporan</button>
+  </div>
+
+<script>
+  const menuData = [
+    { name: "Matcha OG", price: 16000, isCoffee: false },
+    { name: "Matcha Honey", price: 18000, isCoffee: false },
+    { name: "Matcha Cloud", price: 18000, isCoffee: false },
+    { name: "Caramel Matcha", price: 20000, isCoffee: false },
+    { name: "Strawberry Cream Matcha", price: 20000, isCoffee: false },
+    { name: "Ube Cream Matcha Latte", price: 20000, isCoffee: false },
+    { name: "Coconut Matcha", price: 19000, isCoffee: false },
+    { name: "Matcha Cookies", price: 19000, isCoffee: false },
+    { name: "Matcha Oreo", price: 20000, isCoffee: false },
+    { name: "Americano", price: 8000, isCoffee: true },
+    { name: "Cafe Latte", price: 10000, isCoffee: true },
+    { name: "Spanish Latte", price: 12000, isCoffee: true },
+    { name: "Caramel Latte", price: 16000, isCoffee: true }
+  ];
+
+  const orders = {};
+
+  function renderMenu() {
+    const menuGrid = document.getElementById("menuGrid");
+    menuGrid.innerHTML = "";
+    menuData.forEach(item => {
+      if (!orders[item.name]) orders[item.name] = { normal: 0, extra: 0 };
+      const normalSubtotal = orders[item.name].normal * item.price;
+      const extraSubtotal = orders[item.name].extra * (item.price + 3000);
+      const totalRevenue = normalSubtotal + extraSubtotal;
+
+      const div = document.createElement("div");
+      div.className = "menu-card";
+      div.innerHTML = `
+        <h3>${item.name}</h3>
+        <div class="price">Rp ${item.price.toLocaleString('id-ID')}</div>
+        ${item.isCoffee ? `<small style="color:#6b7280;">Extra shoot +Rp3.000</small>` : ""}
+        <div class="revenue">Pendapatan: Rp ${totalRevenue.toLocaleString('id-ID')}</div>
+        <div class="qty-control">
+          <span>Normal:</span>
+          <button onclick="changeQty('${item.name}','normal',-1)">-</button>
+          <input type="number" value="${orders[item.name].normal}" onchange="setQty('${item.name}','normal',this.value)">
+          <button onclick="changeQty('${item.name}','normal',1)">+</button>
+        </div>
+        ${item.isCoffee ? `
+        <div class="qty-control">
+          <span>Extra:</span>
+          <button onclick="changeQty('${item.name}','extra',-1)">-</button>
+          <input type="number" value="${orders[item.name].extra}" onchange="setQty('${item.name}','extra',this.value)">
+          <button onclick="changeQty('${item.name}','extra',1)">+</button>
+        </div>` : ""}
+      `;
+      menuGrid.appendChild(div);
+    });
+    updateSummary();
+  }
+
+  function changeQty(name, type, delta) {
+    orders[name][type] = Math.max(0, orders[name][type] + delta);
+    renderMenu();
+  }
+  function setQty(name, type, val) {
+    val = parseInt(val) || 0;
+    orders[name][type] = Math.max(0, val);
+    renderMenu();
+  }
+
+  function calcMenuRevenue() {
+    return menuData.reduce((sum, item) => {
+      const d = orders[item.name];
+      if (!d) return sum;
+      return sum + d.normal * item.price + d.extra * (item.price + 3000);
+    }, 0);
+  }
+
+  function updateSummary() {
+    const totalCups = Object.values(orders).reduce((sum, d) => sum + d.normal + d.extra, 0);
+    const totalRev = calcMenuRevenue();
+    document.getElementById("totalCups").textContent = totalCups;
+    document.getElementById("menuRevenue").textContent = `Rp ${totalRev.toLocaleString('id-ID')}`;
+    autoCalculateCash();
+  }
+
+  // === AUTO HITUNG CASH ===
+  const inputs = ["qris", "gofood", "expense"];
+  inputs.forEach(id => document.getElementById(id).addEventListener("input", autoCalculateCash));
+
+  function autoCalculateCash() {
+    const menuRevenue = calcMenuRevenue();
+    const qris = +document.getElementById("qris").value || 0;
+    const gofood = +document.getElementById("gofood").value || 0;
+    const cashField = document.getElementById("cash");
+    if (document.activeElement.id !== "cash") {
+      let cash = menuRevenue - (qris + gofood);
+      cashField.value = cash >= 0 ? cash : 0;
+    }
+  }
+
+  function generateReport() {
+    const today = new Date().toLocaleDateString("id-ID",{ day:"2-digit", month:"long", year:"numeric" });
+    let report = `Tanggal: ${today}\nMatchaBoy - Laporan Harian\n\nRINCIAN PENJUALAN\n-------------------------\n`;
+    let totalCups = 0, totalRevenue = 0;
+    menuData.forEach(item => {
+      const d = orders[item.name];
+      if (!d) return;
+      const normalQty = d.normal, extraQty = d.extra;
+      const totalCup = normalQty + extraQty;
+      if (!totalCup) return;
+      const rev = normalQty * item.price + extraQty * (item.price + 3000);
+      report += `${item.name}: `;
+      if (normalQty) report += `${normalQty} cup (Normal) `;
+      if (extraQty) report += `, ${extraQty} cup (Extra) `;
+      report += `→ Rp ${rev.toLocaleString('id-ID')}\n`;
+      totalCups += totalCup; totalRevenue += rev;
+    });
+
+    const cash = +document.getElementById("cash").value || 0;
+    const qris = +document.getElementById("qris").value || 0;
+    const gofood = +document.getElementById("gofood").value || 0;
+    const expense = +document.getElementById("expense").value || 0;
+    const plus = +document.getElementById("plus").value || 0;
+
+    const finalCash = (cash - expense);
+    const totalFinal = finalCash + qris + gofood + plus;
+
+    report += `\nTotal Cup Terjual: ${totalCups}\nPendapatan Menu: Rp ${totalRevenue.toLocaleString('id-ID')}\n\n`;
+    report += `REKAP PENDAPATAN\n-------------------------\nCash : Rp ${cash.toLocaleString('id-ID')}\nQRIS : Rp ${qris.toLocaleString('id-ID')}\nGoFood : Rp ${gofood.toLocaleString('id-ID')}\nPengeluaran : Rp ${expense.toLocaleString('id-ID')}\nUang Plus/Minus : Rp ${plus.toLocaleString('id-ID')}\n\n=======================\nTotal Akhir\nCash : Rp ${finalCash.toLocaleString('id-ID')}\nQRIS : Rp ${qris.toLocaleString('id-ID')}\nGoFood : Rp ${gofood.toLocaleString('id-ID')}\nUang Plus : Rp ${plus.toLocaleString('id-ID')}\nTotal : Rp ${totalFinal.toLocaleString('id-ID')}\n=======================`;
+
+    document.getElementById("dailyReport").value = report;
+  }
+
+  function copyReport() {
+    const text = document.getElementById("dailyReport").value;
+    navigator.clipboard.writeText(text).then(()=>alert("Laporan berhasil dicopy ✅"));
+  }
+
+  renderMenu();
+</script>
+</body>
+</html>
